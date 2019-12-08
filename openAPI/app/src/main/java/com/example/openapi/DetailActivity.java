@@ -10,6 +10,12 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraPosition;
 import com.naver.maps.map.MapFragment;
@@ -19,20 +25,37 @@ import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.util.MarkerIcons;
 
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 
+/**** shows detail of a wedding obj and list of reviews of this place ****/
 public class DetailActivity extends FragmentActivity implements OnMapReadyCallback {
-    WeddingObj weddingObj;
-    TextView nameText;
-    ListView listView;
+    WeddingObj weddingObj;  //current wedding obj
+    TextView nameText;      //name of wedding place
 
+    ListView listView;      //list of details
+    ListView reviewList;    //list of reviews
+    Button writeRv;         //write review button
+
+    //for list of details
     private MyAdaptor adaptor;
     private ArrayList<ListItem>items;
+
+    //for list of reviews
+    private ReviewAdaptor reviewAdaptor;
+    private ArrayList<ListItem> reviewItems;  //ListItem contains only title&date of review
+
+    //firebase database
+    private DatabaseReference mDatabase;
+
+    //saves ReviewItem objects (for detailReviewActivity)
+    private ArrayList<ReviewItem> reviewPosts; //contains all info of review
 
 
     @Override
@@ -48,19 +71,107 @@ public class DetailActivity extends FragmentActivity implements OnMapReadyCallba
         nameText = (TextView)findViewById(R.id.name);
         nameText.append(weddingObj.getName());
 
+        //detail page
         listView = (ListView)findViewById(R.id.listView);
+        //review list page
+        reviewList = (ListView) findViewById(R.id.reviewList);
 
+        //write new review button
+        writeRv = (Button)findViewById(R.id.writeRv);
+        //appears when there is no review yet
+
+        //Naver Map
         initMap();  //initiate map
         initData(); //initiate data to show on listView
         printList();//show the whole data one listView
 
-        //create Button that goes back to MainActivity
-        Button backButton = (Button)findViewById(R.id.back);
+        //Firebase Database
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        backButton.setOnClickListener(new View.OnClickListener(){
+        //create Button that goes back to MainActivity
+
+        findViewById(R.id.back).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        //detail/review switching buttons
+        //detail list button
+        findViewById(R.id.detailB).setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                listView.setVisibility(View.VISIBLE);
+                reviewList.setVisibility(View.GONE);
+                writeRv.setVisibility(View.GONE);
+            }
+        });
+        //review list button
+        findViewById(R.id.reviewB).setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                listView.setVisibility(View.GONE);
+                reviewList.setVisibility(View.VISIBLE);
+                writeRv.setVisibility(View.VISIBLE);
+
+                //load reviews of this wedding obj from database
+                mDatabase.child("posts").child(weddingObj.getName()).addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                reviewItems = new ArrayList<ListItem>();    //for list view
+                                reviewPosts = new ArrayList<ReviewItem>();  //for review detail
+
+                                for(DataSnapshot postSnapShot: dataSnapshot.getChildren()){
+                                    ReviewItem reviewItem = postSnapShot.getValue(ReviewItem.class);
+                                    reviewPosts.add(reviewItem);
+                                    //Log.d("목록", reviewItem.getContent());
+                                    reviewItems.add(new ListItem(reviewItem.content, reviewItem.date));
+                                }
+
+                                //no review written yet
+                                if(reviewItems.isEmpty())
+                                    Toast.makeText(DetailActivity.this, "아직 후기가 없습니다.", Toast.LENGTH_SHORT).show();
+                                //show list of reviews with title and written date
+                                else{
+                                    printReviewList();
+                                    reviewList.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        }
+                );
+            }
+        });
+
+        //click on review item
+        reviewList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ReviewItem review = reviewPosts.get(i);
+
+                //move to review detail page
+                Intent intent = new Intent(getApplicationContext(), DetailReviewActivity.class);
+                intent.putExtra("post", review);
+                intent.putExtra("object", weddingObj);
+                intent.putExtra("from", "detail");
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+        //write new review button
+        writeRv.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                //move to writing review page
+                Intent intent = new Intent(getApplicationContext(), WriteReviewActivity.class);
+                intent.putExtra("object", weddingObj);
                 startActivity(intent);
                 finish();
             }
@@ -120,9 +231,16 @@ public class DetailActivity extends FragmentActivity implements OnMapReadyCallba
 
     }
 
-    /********* show data on listView ************/
+    /********* show details ************/
     private void printList(){
         adaptor = new MyAdaptor(items, getApplicationContext());
         listView.setAdapter(adaptor);
     }
+
+    /********* show list of reviews ************/
+    private void printReviewList(){
+        reviewAdaptor = new ReviewAdaptor(reviewPosts, getApplicationContext());
+        reviewList.setAdapter(reviewAdaptor);
+    }
+
 }
