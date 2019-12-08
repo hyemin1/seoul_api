@@ -62,7 +62,7 @@ public class SplashActivity extends AppCompatActivity {
 
             else {
                 //if parsing is done, move on to MainActivity
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);  //start MainActivity
                 finish();               //finish current activity
             }
