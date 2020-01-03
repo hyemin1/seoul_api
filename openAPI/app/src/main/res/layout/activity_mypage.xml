@@ -33,6 +33,8 @@
         android:layout_weight="2"
         android:background="@drawable/name_bg">
         <Button
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="5dp"
             android:id="@+id/InfoB"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -50,15 +52,17 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="20"
-        android:padding="10dp">
+        android:padding="30dp">
 
         <TextView
+            android:layout_margin="5dp"
             android:id="@+id/curNickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/curNickname"/>
 
         <LinearLayout
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -68,10 +72,35 @@
                 android:text="@string/newNickname"/>
             <EditText
                 android:id="@+id/newNicknameText"
-                android:layout_width="20dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+        <Button
+            android:layout_marginBottom="20dp"
+            android:id="@+id/changeNickB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="별명 변경하기"/>
+
         <LinearLayout
+            android:layout_margin="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="기존 비밀번호"/>
+            <EditText
+                android:id="@+id/curPWText"
+                android:layout_width="100dp"
+                android:inputType="textPassword"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -81,11 +110,13 @@
                 android:text="@string/newpasswordText"/>
             <EditText
                 android:id="@+id/newPWText"
-                android:layout_width="20dp"
+                android:layout_width="100dp"
+                android:inputType="textPassword"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -95,14 +126,15 @@
                 android:text="@string/passwordCheckText"/>
             <EditText
                 android:id="@+id/newPWCheckText"
-                android:layout_width="20dp"
+                android:layout_width="100dp"
+                android:inputType="textPassword"
                 android:layout_height="wrap_content" />
         </LinearLayout>
         <Button
             android:id="@+id/saveChangeB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/save"/>
+            android:text="비밀번호 변경하기"/>
 
     </LinearLayout>
 
