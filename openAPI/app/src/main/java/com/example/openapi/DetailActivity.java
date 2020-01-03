@@ -68,6 +68,7 @@ public class DetailActivity extends FragmentActivity implements OnMapReadyCallba
         weddingObj = (WeddingObj)intent.getSerializableExtra("object");
 
         //show name of weddingObj on the screen
+        //show name of weddingObj on the screen
         nameText = (TextView)findViewById(R.id.name);
         nameText.append(weddingObj.getName());
 
@@ -172,7 +173,17 @@ public class DetailActivity extends FragmentActivity implements OnMapReadyCallba
                 //move to writing review page
                 Intent intent = new Intent(getApplicationContext(), WriteReviewActivity.class);
                 intent.putExtra("object", weddingObj);
+                intent.putExtra("state", "new");
                 startActivity(intent);
+                finish();
+            }
+        });
+
+        findViewById(R.id.mypageB).setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                Intent intent2 = new Intent(getApplicationContext(), MyPageActivity.class);
+                intent2.putExtra("object", weddingObj);
+                startActivity(intent2);
                 finish();
             }
         });
@@ -244,3 +255,4 @@ public class DetailActivity extends FragmentActivity implements OnMapReadyCallba
     }
 
 }
+v
