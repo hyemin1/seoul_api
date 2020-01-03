@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
@@ -25,7 +25,16 @@
             android:text="@string/back"
             android:textColor="#FFFFFF"
             android:textSize="25sp" />
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/mypageB"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="0dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/myPage"/>
+    </RelativeLayout>
 
     <fragment
         android:id="@+id/map"
@@ -43,11 +52,14 @@
         android:layout_weight="2"
         android:background="@drawable/name_bg">
         <Button
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:id="@+id/detailB"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/detail"/>
         <Button
+            android:layout_marginRight="10dp"
             android:id="@+id/reviewB"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
