@@ -255,4 +255,3 @@ public class DetailActivity extends FragmentActivity implements OnMapReadyCallba
     }
 
 }
-v
